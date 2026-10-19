@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Quefory</title>
+  <meta name="description" content="Ask anything, share anything.">
+  <meta name="theme-color" content="#F7F3EA">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="wrap">
+    <div id="setup" class="setup" hidden>Setup needed: open <b>config.js</b> and paste your Supabase URL and anon key.</div>
+
+    <h1 class="logo">Quefory</h1>
+    <p class="greeting" id="greeting">Hi there! Ask anything, share anything.</p>
+
+    <!-- Name (optional) -->
+    <section class="card">
+      <label class="sub" for="name" style="margin-bottom:6px">Your name <span style="opacity:.7">(optional)</span></label>
+      <input id="name" class="field" maxlength="40" placeholder="Leave blank to stay anonymous" autocomplete="off">
+    </section>
+
+    <!-- Ask Me (public) -->
+    <section class="card">
+      <h2>Ask Me <span class="badge g">PUBLIC</span></h2>
+      <p class="sub">Your question &amp; the answer will appear on the board.</p>
+      <textarea id="askBody" class="field" maxlength="1000" placeholder="Type your question…"></textarea>
+      <div class="count" id="askCount">0 / 1000</div>
+      <button id="askBtn" class="btn g">Send question</button>
+    </section>
+
+    <!-- Tell Me (private) -->
+    <section class="card">
+      <h2>Tell Me <span class="badge">🔒 CODE-LOCKED</span></h2>
+      <p class="sub" id="tellSub">Only you and the Listener can see this.</p>
+      <textarea id="tellBody" class="field" maxlength="1000" placeholder="Tell me anything…"></textarea>
+      <div class="count" id="tellCount">0 / 1000</div>
+      <div class="chips" role="group" aria-label="Reply preference">
+        <button class="chip" id="chipReply" aria-pressed="true">💬 Reply to me</button>
+        <button class="chip" id="chipListen" aria-pressed="false">🤍 Just listen</button>
+      </div>
+      <button id="tellBtn" class="btn r">Send privately</button>
+    </section>
+
+    <!-- Board -->
+    <div class="section-title">
+      <h2>Board</h2>
+      <button class="btn sm g" id="openAnyBtn">🔒 Open my box</button>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-f="all" aria-selected="true">All</button>
+      <button class="tab" role="tab" data-f="ask" aria-selected="false">Ask Me</button>
+      <button class="tab" role="tab" data-f="tell" aria-selected="false">Tell Me</button>
+    </div>
+    <div id="board"><div class="empty">Loading…</div></div>
+
+    <footer>Quefory · be kind 🌿</footer>
+  </main>
+
+  <!-- Modal: code after sending Tell Me -->
+  <div class="modal" id="codeModal" hidden>
+    <div class="sheet center">
+      <div style="font-size:44px">💌</div>
+      <p class="big" style="margin-top:6px">Sent, safe &amp; sound.</p>
+      <p class="sub" style="margin:6px 0 0;font-size:14px">Your box: <b id="codeBox" style="color:var(--ink)"></b> · your secret code:</p>
+      <div class="code" id="codeDigits"></div>
+      <div class="note">
+        <b>Remember this code to open your box.</b>
+        <p class="sub" style="margin:6px 0 0">It's the only key. Nobody can recover it for you, not even the Listener.</p>
+      </div>
+      <button class="btn g" id="copyCode">Copy box &amp; code</button>
+      <button class="btn ghost" data-close>I've saved it</button>
+    </div>
+  </div>
+
+  <!-- Modal: enter code -->
+  <div class="modal" id="unlockModal" hidden>
+    <div class="sheet center">
+      <div style="font-size:36px">🔒</div>
+      <p class="big" style="margin-top:4px">Open your box</p>
+      <div id="boxNoWrap" style="margin-top:14px">
+        <label class="sub" for="boxNo" style="margin-bottom:6px">Box number</label>
+        <input id="boxNo" class="field center" maxlength="4" placeholder="e.g. K7QM" autocomplete="off" style="text-transform:uppercase;letter-spacing:.3em;font-weight:bold;max-width:200px;margin:0 auto;display:block">
+      </div>
+      <p class="sub" id="unlockFor" style="margin-top:10px"></p>
+      <div class="code" id="codeInputs">
+        <input class="digit" inputmode="numeric" maxlength="1" aria-label="Digit 1">
+        <input class="digit" inputmode="numeric" maxlength="1" aria-label="Digit 2">
+        <input class="digit" inputmode="numeric" maxlength="1" aria-label="Digit 3">
+        <input class="digit" inputmode="numeric" maxlength="1" aria-label="Digit 4">
+      </div>
+      <div class="error" id="unlockErr"></div>
+      <button class="btn g" id="unlockBtn">Open</button>
+      <button class="btn ghost" data-close>Cancel</button>
+    </div>
+  </div>
+
+  <!-- Modal: inside the box -->
+  <div class="modal" id="boxModal" hidden>
+    <div class="sheet">
+      <div class="logo sm">Quefory</div>
+      <div class="center" style="margin:12px 0 4px"><span class="badge" id="boxBadge"></span></div>
+      <div class="thread" id="thread"></div>
+      <div id="replyArea">
+        <textarea id="replyBody" class="field" maxlength="1000" placeholder="Write a reply…" style="min-height:70px"></textarea>
+        <button class="btn r" id="replyBtn">Send</button>
+      </div>
+      <p class="sub center" id="listenNote" hidden style="margin-top:8px"></p>
+      <div class="error" id="boxErr"></div>
+      <button class="btn ghost" data-close>Close box</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.0/dist/umd/supabase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

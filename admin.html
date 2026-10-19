@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Quefory · Keeper</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#F7F3EA">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="wrap">
+    <div id="setup" class="setup" hidden>Setup needed: open <b>config.js</b> and paste your Supabase URL and anon key.</div>
+    <h1 class="logo sm"><a href="./">Quefory</a></h1>
+    <p class="greeting" style="margin-bottom:18px">Keeper's room 🗝️</p>
+
+    <!-- Login -->
+    <section class="card" id="loginCard" hidden>
+      <h2>Sign in</h2>
+      <p class="sub">Only the Keeper can enter.</p>
+      <input id="email" class="field" type="email" placeholder="Email" autocomplete="username" style="margin-bottom:8px">
+      <input id="password" class="field" type="password" placeholder="Password" autocomplete="current-password">
+      <div class="error" id="loginErr"></div>
+      <button class="btn g" id="loginBtn">Enter</button>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dash" hidden>
+      <div class="row" style="justify-content:space-between;margin:0 4px 12px">
+        <span class="sub" style="margin:0" id="stats"></span>
+        <div class="row">
+          <button class="btn sm g" id="refreshBtn">Refresh</button>
+          <button class="btn sm ghost" id="logoutBtn">Sign out</button>
+        </div>
+      </div>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" data-f="todo" aria-selected="true">To do</button>
+        <button class="tab" role="tab" data-f="ask" aria-selected="false">Ask Me</button>
+        <button class="tab" role="tab" data-f="tell" aria-selected="false">Tell Me</button>
+        <button class="tab" role="tab" data-f="all" aria-selected="false">All</button>
+      </div>
+      <div id="list"></div>
+    </section>
+  </main>
+  <div class="toast" id="toast"></div>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.0/dist/umd/supabase.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
